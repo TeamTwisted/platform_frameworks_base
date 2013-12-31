@@ -316,12 +316,14 @@ setVideoSurface(JNIEnv *env, jobject thiz, jobject jsurface, jboolean mediaPlaye
         if (surface != NULL) {
             new_st = surface->getIGraphicBufferProducer();
             if (new_st == NULL) {
+                env->SetLongField(thiz, fields.surface_texture, 0);
                 jniThrowException(env, "java/lang/IllegalArgumentException",
                     "The surface does not have a binding SurfaceTexture!");
                 return;
             }
             new_st->incStrong((void*)decVideoSurfaceRef);
         } else {
+            env->SetLongField(thiz, fields.surface_texture, 0);
             jniThrowException(env, "java/lang/IllegalArgumentException",
                     "The surface has been released");
             return;
