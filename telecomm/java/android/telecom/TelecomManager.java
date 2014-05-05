@@ -67,6 +67,21 @@ public class TelecomManager {
     public static final String ACTION_NEW_UNKNOWN_CALL = "android.telecom.action.NEW_UNKNOWN_CALL";
 
     /**
+     * Broadcast intent action indicating if the in-call UI has gone into the background.
+     * The string extra {@link #EXTRA_ONGOING_CALL_SHOW} will contain a boolean that
+     * determines whether the ongoing call state should be shown.
+     *
+     * @see #EXTRA_ONGOING_CALL_SHOW
+     */
+    public static final String ACTION_ONGOING_CALL = "android.telecom.action.ONGOING_CALL";
+
+    /**
+     * Extra value to provide a boolean to indicate the ongoing call state
+     * for {@link #ACTION_ONGOING_CALL}
+     */
+    public static final String EXTRA_ONGOING_CALL_SHOW = "android.telecom.extra.ONGOING_CALL_SHOW";
+
+    /**
      * An {@link android.content.Intent} action sent by the telecom framework to start a
      * configuration dialog for a registered {@link PhoneAccount}. There is no default dialog
      * and each app that registers a {@link PhoneAccount} should provide one if desired.

@@ -26,6 +26,7 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.UserHandle;
+import android.telecom.TelecomManager;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -42,8 +43,6 @@ public class StatusBarBgAnimationController {
     private float mDisplayWidth;
     private float mGlowWidth;
     private static final int ANIMATION_DURATION = 3000;
-    private static final String ACTION_ONGOING_CALL = "com.android.systemui.ACTION_ONGOING_CALL";
-    private static final String EXTRA_SHOW = "show";
     private static boolean mShowValueAnimator = false;
     private static boolean mIsScreenOn = true;
     private int mBarHeightKeyguard = -1;
@@ -52,8 +51,9 @@ public class StatusBarBgAnimationController {
     private final BroadcastReceiver mOngoingCallReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (ACTION_ONGOING_CALL.equals(intent.getAction())) {
-                mShowValueAnimator = intent.getBooleanExtra(EXTRA_SHOW, false);
+            if (TelecomManager.ACTION_ONGOING_CALL.equals(intent.getAction())) {
+                mShowValueAnimator = intent.getBooleanExtra(
+                        TelecomManager.EXTRA_ONGOING_CALL_SHOW, false);
 
                 if (!mIsScreenOn) {
                     return;
@@ -92,7 +92,7 @@ public class StatusBarBgAnimationController {
 
         mContext = context;
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(ACTION_ONGOING_CALL);
+        intentFilter.addAction(TelecomManager.ACTION_ONGOING_CALL);
         intentFilter.addAction(Intent.ACTION_SCREEN_ON);
         intentFilter.addAction(Intent.ACTION_SCREEN_OFF);
         mContext.registerReceiverAsUser(mOngoingCallReceiver, UserHandle.ALL, intentFilter,
