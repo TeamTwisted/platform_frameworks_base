@@ -237,6 +237,13 @@
                   android:exported="true">
         </activity>
 
+        <activity android:name="com.sonymobile.systemui.tuner.QsTunerActivity"
+            android:theme="@android:style/Theme.Material.Settings"
+            android:label="@string/system_ui_tuner"
+            android:launchMode="singleInstance"
+            android:excludeFromRecents="true"
+            android:process=":tuner" />
+
         <!-- Alternate Recents -->
         <activity android:name=".recents.RecentsActivity"
                   android:label="@string/accessibility_desc_recent_apps"

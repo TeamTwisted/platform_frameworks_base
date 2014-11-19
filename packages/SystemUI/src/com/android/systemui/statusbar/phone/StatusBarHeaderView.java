@@ -1,6 +1,10 @@
 /*
  * Copyright (C) 2014 The Android Open Source Project
+<<<<<<< HEAD
  * Copyright (C) 2014 The CyanogenMod Project
+=======
+ * Copyright (C) 2014 Sony Mobile Communications Inc.
+>>>>>>> 02be563... Add Quick Settings edit button
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +17,9 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License
+ *
+ * NOTE: This file has been modified by Sony Mobile Communications Inc.
+ * Modifications are licensed under the License.
  */
 
 package com.android.systemui.statusbar.phone;
@@ -68,10 +75,14 @@ import com.android.systemui.omni.StatusBarHeaderMachine;
 import com.android.systemui.qs.QSPanel;
 import com.android.systemui.qs.QSTile;
 import com.android.systemui.statusbar.policy.BatteryController;
+import com.android.systemui.statusbar.policy.KeyguardMonitor;
 import com.android.systemui.statusbar.policy.NetworkControllerImpl.EmergencyListener;
 import com.android.systemui.statusbar.policy.NextAlarmController;
 import com.android.systemui.statusbar.policy.UserInfoController;
+import com.android.systemui.tuner.TunerActivity;
 import com.android.systemui.tuner.TunerService;
+
+import com.sonymobile.systemui.tuner.QsTunerActivity;
 
 import java.text.NumberFormat;
 
@@ -101,6 +112,7 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
     private View mSignalCluster;
     private SettingsButton mSettingsButton;
     private View mSettingsContainer;
+    private View mSomcQuickSettings;
     private View mQsDetailHeader;
     private TextView mQsDetailHeaderTitle;
     private Switch mQsDetailHeaderSwitch;
@@ -140,6 +152,7 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
     private NextAlarmController mNextAlarmController;
     private WeatherController mWeatherController;
     private QSPanel mQSPanel;
+    private KeyguardMonitor mKeyguard;
 
     private final Rect mClipBounds = new Rect();
 
@@ -188,6 +201,8 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         mSettingsButton = (SettingsButton) findViewById(R.id.settings_button);
         mSettingsContainer = findViewById(R.id.settings_button_container);
         mSettingsButton.setOnClickListener(this);
+        mSomcQuickSettings = findViewById(R.id.somc_qs_button);
+        mSomcQuickSettings.setOnClickListener(this);
         mQsDetailHeader = findViewById(R.id.qs_detail_header);
         mQsDetailHeader.setAlpha(0);
         mQsDetailHeaderTitle = (TextView) mQsDetailHeader.findViewById(android.R.id.title);
@@ -394,6 +409,7 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         mBatteryLevel.setVisibility(View.VISIBLE);
         mSettingsContainer.findViewById(R.id.tuner_icon).setVisibility(
                 TunerService.isTunerEnabled(mContext) ? View.VISIBLE : View.INVISIBLE);
+        updateSomcQuickSettingsVisibility();
     }
 
     private void updateSignalClusterDetachment() {
@@ -415,8 +431,10 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
 
     private void updateSystemIconsLayoutParams() {
         RelativeLayout.LayoutParams lp = (LayoutParams) mSystemIconsSuperContainer.getLayoutParams();
+        int baseId = mSomcQuickSettings.getVisibility() != View.GONE
+                ? mSomcQuickSettings.getId() : mSettingsContainer.getId();
         int rule = mExpanded
-                ? mSettingsContainer.getId()
+                ? baseId
                 : mMultiUserSwitch.getId();
         if (rule != lp.getRules()[RelativeLayout.START_OF]) {
             lp.addRule(RelativeLayout.START_OF, rule);
@@ -429,10 +447,12 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
             mSettingsObserver.observe();
             mNextAlarmController.addStateChangedCallback(this);
             mWeatherController.addCallback(this);
+            mKeyguard.addCallback(mKeyguardCallback);
         } else {
             mNextAlarmController.removeStateChangedCallback(this);
             mWeatherController.removeCallback(this);
             mSettingsObserver.unobserve();
+            mKeyguard.removeCallback(mKeyguardCallback);
         }
     }
 
@@ -593,6 +613,10 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
                 }
             }
             startSettingsActivity();
+        } else if (v == mSomcQuickSettings) {
+            Intent intent = new Intent(getContext(), QsTunerActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+            mActivityStarter.startActivity(intent, true /* dismissShade */);
         } else if (v == mSystemIconsSuperContainer) {
             startBatteryActivity();
         } else if (v == mAlarmStatus && mNextAlarm != null) {
@@ -691,6 +715,7 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         mQSPanel = qsp;
         if (mQSPanel != null) {
             mQSPanel.setCallback(mQsPanelCallback);
+            mKeyguard = mQSPanel.getHost().getKeyguardMonitor();
         }
         mMultiUserSwitch.setQsPanel(qsp);
     }
@@ -745,6 +770,10 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
                 : mMultiUserSwitch.getLeft() - mSettingsContainer.getLeft();
         target.signalClusterAlpha = mSignalClusterDetached ? 0f : 1f;
         target.settingsRotation = !mExpanded ? 90f : 0f;
+        target.somcQuickSettingsAlpha = getAlphaForVisibility(mSomcQuickSettings);
+        target.somcQuickSettingsTranslation = mExpanded
+                ? 0
+                : mSettingsContainer.getLeft() - mSomcQuickSettings.getLeft();
     }
 
     private float getAlphaForVisibility(View v) {
@@ -800,6 +829,8 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
             mSettingsContainer.setTranslationX(values.settingsTranslation);
             mSettingsButton.setRotation(values.settingsRotation);
         }
+        mSomcQuickSettings.setTranslationY(mSystemIconsSuperContainer.getTranslationY());
+        mSomcQuickSettings.setTranslationX(values.somcQuickSettingsTranslation);
         applyAlpha(mEmergencyCallsOnly, values.emergencyCallsOnlyAlpha);
         if (!mShowingDetail && !mDetailTransitioning) {
             // Otherwise it needs to stay invisible
@@ -811,6 +842,7 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         applyAlpha(mSettingsContainer, values.settingsAlpha);
         applyAlpha(mWeatherLine1, values.settingsAlpha);
         applyAlpha(mWeatherLine2, values.settingsAlpha);
+        applyAlpha(mSomcQuickSettings, values.settingsAlpha);
         applyAlpha(mSignalCluster, values.signalClusterAlpha);
         if (!mExpanded) {
             mTime.setScaleX(1f);
@@ -844,6 +876,8 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         float signalClusterAlpha;
         float settingsRotation;
         float weatherY;
+        float somcQuickSettingsAlpha;
+        float somcQuickSettingsTranslation;
 
         public void interpoloate(LayoutValues v1, LayoutValues v2, float t) {
             timeScale = v1.timeScale * (1 - t) + v2.timeScale * t;
@@ -856,6 +890,8 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
             batteryY = v1.batteryY * (1 - t) + v2.batteryY * t;
             settingsTranslation = v1.settingsTranslation * (1 - t) + v2.settingsTranslation * t;
             weatherY = v1.weatherY * (1 - t) + v2.weatherY * t;
+            somcQuickSettingsTranslation =
+                    v1.somcQuickSettingsTranslation * (1 - t) + v2.somcQuickSettingsTranslation * t;
 
             float t1 = Math.max(0, t - 0.5f) * 2;
             settingsRotation = v1.settingsRotation * (1 - t1) + v2.settingsRotation * t1;
@@ -870,6 +906,8 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
             batteryLevelExpandedAlpha =
                     v1.batteryLevelExpandedAlpha * (1 - t3) + v2.batteryLevelExpandedAlpha * t3;
             settingsAlpha = v1.settingsAlpha * (1 - t3) + v2.settingsAlpha * t3;
+            somcQuickSettingsAlpha =
+                    v1.somcQuickSettingsAlpha * (1 - t3) + v2.somcQuickSettingsAlpha * t3;
             dateExpandedAlpha = v1.dateExpandedAlpha * (1 - t3) + v2.dateExpandedAlpha * t3;
             dateCollapsedAlpha = v1.dateCollapsedAlpha * (1 - t3) + v2.dateCollapsedAlpha * t3;
             alarmStatusAlpha = v1.alarmStatusAlpha * (1 - t3) + v2.alarmStatusAlpha * t3;
@@ -1117,4 +1155,22 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         mBatteryLevel.setShadowLayer(0, 0, 0, Color.BLACK);
         mAlarmStatus.setShadowLayer(0, 0, 0, Color.BLACK);
     }
+
+    private void updateSomcQuickSettingsVisibility() {
+        boolean isLocked = mKeyguard != null && mKeyguard.isSecure() && mKeyguard.isShowing();
+        if (isLocked) {
+            mSomcQuickSettings.setVisibility(View.GONE);
+        } else if (mExpanded) {
+            mSomcQuickSettings.setVisibility(View.VISIBLE);
+        } else {
+            mSomcQuickSettings.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    private KeyguardMonitor.Callback mKeyguardCallback = new KeyguardMonitor.Callback() {
+        @Override
+        public void onKeyguardChanged() {
+            updateSomcQuickSettingsVisibility();
+        }
+    };
 }
