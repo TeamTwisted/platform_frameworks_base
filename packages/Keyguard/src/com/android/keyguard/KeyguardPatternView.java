@@ -142,6 +142,7 @@ public class KeyguardPatternView extends LinearLayout implements KeyguardSecurit
 
         mSecurityMessageDisplay =
                 (KeyguardMessageArea) KeyguardMessageArea.findSecurityMessageDisplay(this);
+        mSecurityMessageDisplay.setDefaultMessage(R.string.kg_pattern_instructions);
         mEcaView = findViewById(R.id.keyguard_selector_fade_container);
         mContainer = (ViewGroup) findViewById(R.id.container);
 

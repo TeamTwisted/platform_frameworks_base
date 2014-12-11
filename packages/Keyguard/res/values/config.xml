@@ -28,4 +28,8 @@
 
     <!-- Threshold in micro amperes above which a charger is rated as "fast" -->
     <integer name="config_chargingFastThreshold">1500000</integer>
+
+    <!-- Show "Enter PIN/Pattern/Password" hint text [DO NOT TRANSLATE] -->
+    <bool name="config_showPinEntryHint">false</bool>
+
 </resources>

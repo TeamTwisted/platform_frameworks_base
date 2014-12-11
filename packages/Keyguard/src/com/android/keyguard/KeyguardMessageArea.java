@@ -41,7 +41,7 @@ class KeyguardMessageArea extends TextView implements SecurityMessageDisplay {
     private static final long ANNOUNCEMENT_DELAY = 250;
     private static final int DEFAULT_COLOR = -1;
 
-    private static final int SECURITY_MESSAGE_DURATION = 5000;
+    private static final int SECURITY_MESSAGE_DURATION = 3000;
 
     private final KeyguardUpdateMonitor mUpdateMonitor;
     private final Handler mHandler;
@@ -51,6 +51,7 @@ class KeyguardMessageArea extends TextView implements SecurityMessageDisplay {
     long mTimeout = SECURITY_MESSAGE_DURATION;
     CharSequence mMessage;
     private int mNextMessageColor = DEFAULT_COLOR;
+    private CharSequence mDefaultMessage;
 
     private final Runnable mClearMessageRunnable = new Runnable() {
         @Override
@@ -92,7 +93,8 @@ class KeyguardMessageArea extends TextView implements SecurityMessageDisplay {
 
     @Override
     public void setMessage(CharSequence msg, boolean important) {
-        if (!TextUtils.isEmpty(msg) && important) {
+        if ((!TextUtils.isEmpty(msg) && important) ||
+                TextUtils.isEmpty(mMessage)) {
             securityMessageChanged(msg);
         } else {
             clearMessage();
@@ -101,7 +103,7 @@ class KeyguardMessageArea extends TextView implements SecurityMessageDisplay {
 
     @Override
     public void setMessage(int resId, boolean important) {
-        if (resId != 0 && important) {
+        if ((resId != 0 && important) || TextUtils.isEmpty(mMessage)) {
             CharSequence message = getContext().getResources().getText(resId);
             securityMessageChanged(message);
         } else {
@@ -111,7 +113,7 @@ class KeyguardMessageArea extends TextView implements SecurityMessageDisplay {
 
     @Override
     public void setMessage(int resId, boolean important, Object... formatArgs) {
-        if (resId != 0 && important) {
+        if ((resId != 0 && important) || TextUtils.isEmpty(mMessage)) {
             String message = getContext().getString(resId, formatArgs);
             securityMessageChanged(message);
         } else {
@@ -122,6 +124,11 @@ class KeyguardMessageArea extends TextView implements SecurityMessageDisplay {
     @Override
     public void setTimeout(int timeoutMs) {
         mTimeout = timeoutMs;
+    }
+
+    @Override
+    public void setDefaultMessage(final int resId) {
+        mDefaultMessage = getContext().getResources().getText(resId);
     }
 
     public static SecurityMessageDisplay findSecurityMessageDisplay(View v) {
@@ -157,7 +164,8 @@ class KeyguardMessageArea extends TextView implements SecurityMessageDisplay {
     }
 
     private void update() {
-        CharSequence status = mMessage;
+        boolean showHint = getContext().getResources().getBoolean(R.bool.config_showPinEntryHint);
+        CharSequence status = TextUtils.isEmpty(mMessage) && showHint ? mDefaultMessage : mMessage;
         setVisibility(TextUtils.isEmpty(status) ? INVISIBLE : VISIBLE);
         setText(status);
         int color = mDefaultColor;
