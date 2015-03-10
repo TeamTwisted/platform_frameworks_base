@@ -12456,6 +12456,7 @@ public final class ActivityManagerService extends ActivityManagerNative
         // concurrently during execution of this method)
         synchronized (this) {
             sb.append("Process: ").append(processName).append("\n");
+            sb.append("PID: ").append(process.pid).append("\n");
             int flags = process.info.flags;
             IPackageManager pm = AppGlobals.getPackageManager();
             sb.append("Flags: 0x").append(Integer.toString(flags, 16)).append("\n");
