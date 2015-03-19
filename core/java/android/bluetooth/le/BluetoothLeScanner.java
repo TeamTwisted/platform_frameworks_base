@@ -285,9 +285,8 @@ public final class BluetoothLeScanner {
                 try {
                     mBluetoothGatt.stopScan(mClientIf, false);
                 } catch (RemoteException e) {
-                    Log.e(TAG, "Failed to stop scan and unregister", e);
+                    Log.e(TAG, "Failed to stop scan but stay register", e);
                 }
-                mClientIf = -1;
             }
         }
 
