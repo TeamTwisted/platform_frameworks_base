@@ -310,19 +310,27 @@ public final class UsbAlsaManager {
                 : UsbAudioDevice.kAudioDeviceClass_Internal) |
             UsbAudioDevice.kAudioDeviceMeta_Alsa;
 
+        boolean isPlaybackPresent = hasPlayback;
+
         // Playback device file needed/present?
         if (hasPlayback && (waitForAlsaDevice(card, device, AlsaDevice.TYPE_PLAYBACK) == null)) {
-            return null;
+            isPlaybackPresent = false;
         }
+
+        boolean isCapturePresent = hasCapture;
 
         // Capture device file needed/present?
         if (hasCapture && (waitForAlsaDevice(card, device, AlsaDevice.TYPE_CAPTURE) == null)) {
-            return null;
+            isCapturePresent = false;
         }
 
         if (DEBUG) {
             Slog.d(TAG, "usb: hasPlayback:" + hasPlayback + " hasCapture:" + hasCapture);
         }
+
+        // if both playback and capture not present then only return
+        if (!isPlaybackPresent && !isCapturePresent)
+            return null;
 
         UsbAudioDevice audioDevice =
                 new UsbAudioDevice(card, device, hasPlayback, hasCapture, deviceClass);
