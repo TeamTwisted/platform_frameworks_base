@@ -1185,14 +1185,14 @@ public class AudioService extends IAudioService.Stub {
 
         boolean isMuteAdjust = isMuteAdjust(direction);
 
-        if (isMuteAdjust && !isStreamAffectedByMute(streamType)) {
-            return;
-        }
-
         // use stream type alias here so that streams with same alias have the same behavior,
         // including with regard to silent mode control (e.g the use of STREAM_RING below and in
         // checkForRingerModeChange() in place of STREAM_RING or STREAM_NOTIFICATION)
         int streamTypeAlias = mStreamVolumeAlias[streamType];
+
+        if (isMuteAdjust && !isStreamAffectedByMute(streamTypeAlias)) {
+            return;
+        }
 
         VolumeStreamState streamState = mStreamStates[streamTypeAlias];
 
