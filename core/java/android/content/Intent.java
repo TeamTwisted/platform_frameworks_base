@@ -8003,21 +8003,16 @@ public class Intent implements Parcelable, Cloneable {
             }
         }
 
-        int event;
-        String name;
-        while (((event = in.next()) != XmlPullParser.END_DOCUMENT) &&
-                (event != XmlPullParser.END_TAG || in.getDepth() < outerDepth)) {
-            if (event == XmlPullParser.START_TAG) {
-                name = in.getName();
-                if (TAG_CATEGORIES.equals(name)) {
-                    attrCount = in.getAttributeCount();
-                    for (int attrNdx = attrCount - 1; attrNdx >= 0; --attrNdx) {
-                        intent.addCategory(in.getAttributeValue(attrNdx));
-                    }
-                } else {
-                    Log.w("Intent", "restoreFromXml: unknown name=" + name);
-                    XmlUtils.skipCurrentTag(in);
+        while (XmlUtils.nextElementWithin(in, outerDepth)) {
+            final String name = in.getName();
+            if (TAG_CATEGORIES.equals(name)) {
+                attrCount = in.getAttributeCount();
+                for (int attrNdx = attrCount - 1; attrNdx >= 0; --attrNdx) {
+                    intent.addCategory(in.getAttributeValue(attrNdx));
                 }
+            } else {
+                Log.w("Intent", "restoreFromXml: unknown name=" + name);
+                XmlUtils.skipCurrentTag(in);
             }
         }
 

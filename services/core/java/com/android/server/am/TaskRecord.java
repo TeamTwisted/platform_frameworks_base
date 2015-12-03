@@ -983,7 +983,7 @@ final class TaskRecord {
             throws IOException, XmlPullParserException {
         Intent intent = null;
         Intent affinityIntent = null;
-        ArrayList<ActivityRecord> activities = new ArrayList<ActivityRecord>();
+        ArrayList<ActivityRecord> activities = new ArrayList<>();
         ComponentName realActivity = null;
         ComponentName origActivity = null;
         String affinity = null;
@@ -1073,28 +1073,22 @@ final class TaskRecord {
             }
         }
 
-        int event;
-        while (((event = in.next()) != XmlPullParser.END_DOCUMENT) &&
-                (event != XmlPullParser.END_TAG || in.getDepth() < outerDepth)) {
-            if (event == XmlPullParser.START_TAG) {
-                final String name = in.getName();
-                if (TaskPersister.DEBUG) Slog.d(TaskPersister.TAG, "TaskRecord: START_TAG name=" +
-                        name);
-                if (TAG_AFFINITYINTENT.equals(name)) {
-                    affinityIntent = Intent.restoreFromXml(in);
-                } else if (TAG_INTENT.equals(name)) {
-                    intent = Intent.restoreFromXml(in);
-                } else if (TAG_ACTIVITY.equals(name)) {
-                    ActivityRecord activity = ActivityRecord.restoreFromXml(in, stackSupervisor);
-                    if (TaskPersister.DEBUG) Slog.d(TaskPersister.TAG, "TaskRecord: activity=" +
-                            activity);
-                    if (activity != null) {
-                        activities.add(activity);
-                    }
-                } else {
-                    Slog.e(TAG, "restoreTask: Unexpected name=" + name);
-                    XmlUtils.skipCurrentTag(in);
-                }
+        while (XmlUtils.nextElementWithin(in, outerDepth)) {
+            final String name = in.getName();
+            if (TaskPersister.DEBUG) Slog.d(TaskPersister.TAG,
+                    "TaskRecord: START_TAG name=" + name);
+            if (TAG_AFFINITYINTENT.equals(name)) {
+                affinityIntent = Intent.restoreFromXml(in);
+            } else if (TAG_INTENT.equals(name)) {
+                intent = Intent.restoreFromXml(in);
+            } else if (TAG_ACTIVITY.equals(name)) {
+                ActivityRecord activity = ActivityRecord.restoreFromXml(in, stackSupervisor);
+                if (TaskPersister.DEBUG) Slog.d(TaskPersister.TAG,
+                        "TaskRecord: activity=" + activity);
+                activities.add(activity);
+            } else {
+                Slog.e(TAG, "restoreTask: Unexpected name=" + name);
+                XmlUtils.skipCurrentTag(in);
             }
         }
         if (!hasRootAffinity) {
