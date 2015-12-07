@@ -852,8 +852,20 @@ final class WifiDisplayController implements DumpUtils.Dump {
                                 // this is the case when we received an incoming connection
                                 // from the sink, update both mConnectingDevice and mDesiredDevice
                                 // then proceed to updateConnection() below
-                                mConnectingDevice = mDesiredDevice = owner ?
-                                        info.getClientList().iterator().next() : info.getOwner();
+                                if (owner) {
+                                    mConnectingDevice = mDesiredDevice =
+                                            info.getClientList().iterator().next();
+                                } else {
+                                    final String ownerAddress = info.getOwner().deviceAddress;
+                                    // as getOwner only returns deviceAddress, in case of client get
+                                    // GO device informations from mAvailableWifiDisplayPeers
+                                    for (WifiP2pDevice device : mAvailableWifiDisplayPeers) {
+                                        if (device.deviceAddress.equals(ownerAddress)) {
+                                            mConnectingDevice = mDesiredDevice = device;
+                                            break;
+                                        }
+                                    }
+                                }
                             }
                         }
 
