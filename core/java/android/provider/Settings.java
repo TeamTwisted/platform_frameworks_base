@@ -3595,6 +3595,12 @@ public final class Settings {
         public static final String DOZE_BRIGHTNESS = "doze_brightness";
 
          /**
+         * Enable vibration when double tapping the power button for camera
+         * @hide
+         */
+        public static final String DOUBLE_TAP_VIBRATE = "double_tap_vibrate";
+
+         /**
          * Enable double tap gesture anywhere on the lock screen put device to sleep
          * @hide
          */
