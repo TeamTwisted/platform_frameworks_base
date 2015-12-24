@@ -3195,6 +3195,7 @@ public final class ViewRootImpl implements ViewParent,
     private final static int MSG_DISPATCH_WINDOW_SHOWN = 25;
     private final static int MSG_DISPATCH_WINDOW_ANIMATION_STOPPED = 26;
     private final static int MSG_DISPATCH_WINDOW_ANIMATION_STARTED = 27;
+    private final static int MSG_DISPATCH_ACCESSIBILITY_EVENT = 28;
 
     final class ViewRootHandler extends Handler {
         @Override
@@ -3248,6 +3249,8 @@ public final class ViewRootImpl implements ViewParent,
                     return "MSG_SYNTHESIZE_INPUT_EVENT";
                 case MSG_DISPATCH_WINDOW_SHOWN:
                     return "MSG_DISPATCH_WINDOW_SHOWN";
+                case MSG_DISPATCH_ACCESSIBILITY_EVENT:
+                    return "MSG_DISPATCH_ACCESSIBILITY_EVENT";
             }
             return super.getMessageName(message);
         }
@@ -3483,6 +3486,15 @@ public final class ViewRootImpl implements ViewParent,
             } break;
             case MSG_DISPATCH_WINDOW_SHOWN: {
                 handleDispatchWindowShown();
+            } break;
+            case MSG_DISPATCH_ACCESSIBILITY_EVENT: {
+                if (mView != null && mAttachInfo.mHasWindowFocus) {
+                    mView.sendAccessibilityEvent(AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED);
+                    View focusedView = mView.findFocus();
+                    if (focusedView != null && focusedView != mView) {
+                        focusedView.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED);
+                    }
+                }
             }
             }
         }
@@ -6951,13 +6963,7 @@ public final class ViewRootImpl implements ViewParent,
         public void onAccessibilityStateChanged(boolean enabled) {
             if (enabled) {
                 ensureConnection();
-                if (mAttachInfo.mHasWindowFocus) {
-                    mView.sendAccessibilityEvent(AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED);
-                    View focusedView = mView.findFocus();
-                    if (focusedView != null && focusedView != mView) {
-                        focusedView.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED);
-                    }
-                }
+                mHandler.obtainMessage(MSG_DISPATCH_ACCESSIBILITY_EVENT).sendToTarget();
             } else {
                 ensureNoConnection();
                 mHandler.obtainMessage(MSG_CLEAR_ACCESSIBILITY_FOCUS_HOST).sendToTarget();
