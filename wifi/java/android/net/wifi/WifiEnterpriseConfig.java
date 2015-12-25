@@ -768,7 +768,11 @@ public class WifiEnterpriseConfig implements Parcelable {
     public String toString() {
         StringBuffer sb = new StringBuffer();
         for (String key : mFields.keySet()) {
-            sb.append(key).append(" ").append(mFields.get(key)).append("\n");
+            sb.append(key).append(" ");
+            if (key.equals(PASSWORD_KEY) || key.equals(IDENTITY_KEY))
+                sb.append(" *\n");
+            else
+                sb.append(mFields.get(key)).append("\n");
         }
         return sb.toString();
     }
