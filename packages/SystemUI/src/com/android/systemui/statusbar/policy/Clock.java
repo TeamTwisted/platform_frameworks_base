@@ -103,7 +103,7 @@ public class Clock extends TextView implements DemoMode {
     protected int mClockFontStyle = FONT_NORMAL;
     protected boolean mShowClock;
     private int mClockAndDateWidth;
-
+    private int mClockFontSize = 14;
     private int mAmPmStyle;
 
     private SettingsObserver mSettingsObserver;
@@ -137,6 +137,9 @@ public class Clock extends TextView implements DemoMode {
             resolver.registerContentObserver(Settings.System
                     .getUriFor(Settings.System.STATUSBAR_CLOCK_FONT_STYLE), false,
                     mSettingsObserver);
+            resolver.registerContentObserver(Settings.System
+                   .getUriFor(Settings.System.STATUSBAR_CLOCK_FONT_SIZE), false,
+                    this, UserHandle.USER_ALL);
             updateSettings();
         }
 
@@ -381,6 +384,9 @@ public class Clock extends TextView implements DemoMode {
         mClockDateStyle = Settings.System.getIntForUser(resolver,
                 Settings.System.STATUSBAR_CLOCK_DATE_STYLE, CLOCK_DATE_STYLE_REGULAR,
                 UserHandle.USER_CURRENT);
+        mClockFontSize = Settings.System.getIntForUser(resolver,
+                Settings.System.STATUSBAR_CLOCK_FONT_SIZE, 14,
+                UserHandle.USER_CURRENT);
 
         mClockFontStyle = Settings.System.getInt(resolver,
                 Settings.System.STATUSBAR_CLOCK_FONT_STYLE, FONT_NORMAL);
@@ -406,6 +412,7 @@ public class Clock extends TextView implements DemoMode {
         if (mAttached) {
             getFontStyle(mClockFontStyle);
             updateClockVisibility();
+        setTextSize(mClockFontSize);
             updateClock();
         }
 

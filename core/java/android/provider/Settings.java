@@ -3937,6 +3937,12 @@ public final class Settings {
         public static final String STATUSBAR_BATTERY_BAR_STYLE = "statusbar_battery_bar_style";
 
         /**
+         * Settings for clock font size
+         * @hide
+         */
+        public static final String STATUSBAR_CLOCK_FONT_SIZE = "statusbar_clock_font_size";
+
+        /**
          * @hide
          */
         public static final String STATUSBAR_BATTERY_BAR_ANIMATE = "statusbar_battery_bar_animate";
