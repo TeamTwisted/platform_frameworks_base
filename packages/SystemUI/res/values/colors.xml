@@ -164,4 +164,7 @@
     <!-- Ongoing call animation background color -->
     <color name="ongoing_call_bg_color">#6ca900</color>
 
+    <!-- Navigation bar -->
+    <color name="navigationbar_button_default_color">#FFFFFFFF</color>
+
 </resources>
