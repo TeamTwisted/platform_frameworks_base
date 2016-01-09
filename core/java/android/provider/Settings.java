@@ -4136,6 +4136,12 @@ public final class Settings {
         public static final String POWER_MENU_ANIMATIONS = "power_menu_animations";
 
         /**
+         * Boolean value whether volume down in silent can enter zen mode
+         * @hide
+         */
+        public static final String VOLUME_DOWN_ZEN = "volume_down_zen";
+
+        /**
          * The alpha value of the On-The-Go overlay.
          *
          * @hide
