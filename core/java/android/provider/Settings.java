@@ -3766,12 +3766,6 @@ public final class Settings {
          */
         public static final String LOCK_SCREEN_VISIBLE_NOTIFICATIONS = "lock_screen_visible_notifications";
 
-        /**
-         * Whether to show the IME arrows in the status bar
-         * @hide
-         */
-        public static final String STATUS_BAR_IME_ARROWS = "status_bar_ime_arrows";
-
         /**  
          * AOKP Custom System Animations
          * @hide
