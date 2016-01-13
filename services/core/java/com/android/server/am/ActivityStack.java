@@ -3704,7 +3704,11 @@ final class ActivityStack {
 
         // Set focus to the top running activity of this stack.
         ActivityRecord r = topRunningActivityLocked(null);
-        mService.setFocusedActivityLocked(r, reason);
+        if (r != null) {
+            mService.setFocusedActivityLocked(r, reason);
+        } else {
+            moveToFront(reason);
+        }
 
         if (DEBUG_TRANSITION) Slog.v(TAG_TRANSITION, "Prepare to front transition: task=" + tr);
         if (noAnimation) {
