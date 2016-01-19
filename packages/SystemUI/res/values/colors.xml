@@ -160,4 +160,8 @@
 
     <!-- Used by selector -->
     <color name="card_pressed">#7e3c3c3c</color>
+
+    <!-- Ongoing call animation background color -->
+    <color name="ongoing_call_bg_color">#6ca900</color>
+
 </resources>

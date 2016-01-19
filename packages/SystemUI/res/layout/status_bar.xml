@@ -28,6 +28,20 @@
     android:focusable="false"
     android:descendantFocusability="afterDescendants"
     >
+    <FrameLayout
+        android:id="@+id/ongoing_call_bg_parent_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:background="@color/ongoing_call_bg_color">
+        <ImageView
+            android:id="@+id/ongoing_call_glow"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:scaleType="fitXY"
+            android:layout_gravity="left"
+            />
+    </FrameLayout>
 
     <ImageView
         android:id="@+id/notification_lights_out"
