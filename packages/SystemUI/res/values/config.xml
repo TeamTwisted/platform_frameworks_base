@@ -51,7 +51,7 @@
 
     <!-- Control whether status bar should distinguish HSPA data icon form UMTS
     data icon on devices -->
-    <bool name="config_hspa_data_distinguishable">false</bool>
+    <bool name="config_hspa_data_distinguishable">true</bool>
 
     <!-- Component to be used as the status bar service.  Must implement the IStatusBar
      interface.  This name is in the ComponentName flattened format (package/class)  -->
@@ -138,7 +138,7 @@
     <integer name="quick_settings_detail_max_item_count">7</integer>
 
     <!-- Should "4G" be shown instead of "LTE" when the network is NETWORK_TYPE_LTE? -->
-    <bool name="config_show4GForLTE">true</bool>
+    <bool name="config_show4GForLTE">false</bool>
 
     <!-- milliseconds before the heads up notification auto-dismisses. -->
     <integer name="heads_up_notification_decay">5000</integer>
