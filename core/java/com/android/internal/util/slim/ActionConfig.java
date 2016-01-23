@@ -16,6 +16,8 @@
 
 package com.android.internal.util.slim;
 
+import com.android.internal.util.slim.ActionConstants;
+
 public class ActionConfig {
 
     private String mClickAction;
@@ -28,8 +30,14 @@ public class ActionConfig {
                     String longpressAction, String longpressActionDescription, String iconUri) {
         mClickAction = clickAction;
         mClickActionDescription = clickActionDescription;
-        mLongpressAction = longpressAction;
-        mLongpressActionDescription = longpressActionDescription;
+        if (mClickAction.equals(ActionConstants.ACTION_HOME)) {
+            // Google Now / Now on Tap will always be Home longpress action, period !
+            mLongpressAction = ActionConstants.ACTION_NOWONTAP;
+            mLongpressActionDescription = ActionConstants.ACTION_GOOGLE_NOW_DESC;
+        } else {
+            mLongpressAction = longpressAction;
+            mLongpressActionDescription = longpressActionDescription;
+        }
         mIconUri = iconUri;
     }
 
@@ -67,11 +75,21 @@ public class ActionConfig {
     }
 
     public void setLongpressAction(String action) {
-        mLongpressAction = action;
+        if (mClickAction.equals(ActionConstants.ACTION_HOME)) {
+            // Google Now / Now on Tap will always be Home longpress action, period !
+            mLongpressAction = ActionConstants.ACTION_NOWONTAP;
+        } else {
+            mLongpressAction = action;
+        }
     }
 
     public void setLongpressActionDescription(String description) {
-        mLongpressActionDescription = description;
+        if (mClickAction.equals(ActionConstants.ACTION_HOME)) {
+            // Google Now / Now on Tap will always be Home longpress action, period !
+            mLongpressActionDescription = ActionConstants.ACTION_GOOGLE_NOW_DESC;
+        } else {
+            mLongpressActionDescription = description;
+        }
     }
 
     public void setIcon(String iconUri) {

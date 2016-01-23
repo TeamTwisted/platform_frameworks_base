@@ -58,6 +58,10 @@ public class ActionConstants {
     // no action
     public static final String ACTION_NULL            = "**null**";
 
+    // longpress menu description
+    public static final String ACTION_NOWONTAP             = "**nowontap**";
+    public static final String ACTION_GOOGLE_NOW_DESC      = "Google Now / Now on Tap";
+
     // this shorcut constant is only used to identify if the user
     // selected in settings a custom app...after it is choosed intent uri
     // is saved in the ButtonConfig object
