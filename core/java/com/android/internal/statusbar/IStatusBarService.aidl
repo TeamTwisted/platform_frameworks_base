@@ -16,6 +16,7 @@
 
 package com.android.internal.statusbar;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.service.notification.StatusBarNotification;
 
@@ -41,6 +42,7 @@ interface IStatusBarService
             boolean showImeSwitcher);
     void expandSettingsPanel();
     void setCurrentUser(int newUserId);
+    void showCustomIntentAfterKeyguard(inout Intent intent);
 
     // ---- Methods below are for use by the status bar policy services ----
     // You need the STATUS_BAR_SERVICE permission
@@ -91,4 +93,11 @@ interface IStatusBarService
 
     void startAssist(in Bundle args);
     void setAutoRotate(boolean enabled);
+
+    /**
+     * SlimActions additions
+     */
+    void toggleScreenshot();
+    void toggleLastApp();
+    void toggleKillApp();
 }
