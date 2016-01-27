@@ -31,16 +31,6 @@
   <!-- Doze invert -->
   <java-symbol type="bool" name="config_invert_colors_on_doze" />
 
-  <!-- Developer settings - Kill app back press -->
-  <java-symbol type="string" name="app_killed_message" />
-
-  <!-- Config.xml entries -->
-  <java-symbol type="integer" name="config_backKillTimeout" />
-
-  <!-- kill app long press back -->
-  <java-symbol type="string" name="app_killed_message" />
-  <java-symbol type="integer" name="config_backKillTimeout" />
-
   <!-- Screen record -->
   <java-symbol type="drawable" name="ic_lock_screen_record" />
   <java-symbol type="string" name="global_action_screen_record" />
