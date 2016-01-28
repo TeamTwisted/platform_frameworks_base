@@ -151,6 +151,7 @@ class BluetoothManagerService extends IBluetoothManager.Stub {
     private final BluetoothHandler mHandler;
     private int mErrorRecoveryRetryCounter;
     private final int mSystemUiUid;
+    private boolean mIntentPending = false;
 
     // Save a ProfileServiceConnections object for each of the bound
     // bluetooth profile services
@@ -1665,7 +1666,11 @@ class BluetoothManagerService extends IBluetoothManager.Stub {
                         unbindAndFinish();
                         sendBleStateChanged(prevState, newState);
                         // Don't broadcast as it has already been broadcast before
-                        isStandardBroadcast = false;
+                        if(!mIntentPending) {
+                            isStandardBroadcast = false;
+                        }else {
+                            mIntentPending = false;
+                        }
                     }
 
                 } else if (!intermediate_off) {
@@ -1694,6 +1699,14 @@ class BluetoothManagerService extends IBluetoothManager.Stub {
                     // Broadcast as STATE_OFF
                     newState = BluetoothAdapter.STATE_OFF;
                     sendBrEdrDownCallback();
+                    if(!isBleAppPresent()){
+                        isStandardBroadcast = false;
+                        mIntentPending = true;
+                    }
+                    else{
+                        mIntentPending = false;
+                        isStandardBroadcast = true;
+                    }
                 }
             } else if (newState == BluetoothAdapter.STATE_ON) {
                 boolean isUp = (newState==BluetoothAdapter.STATE_ON);
@@ -1714,6 +1727,10 @@ class BluetoothManagerService extends IBluetoothManager.Stub {
                 if (prevState == BluetoothAdapter.STATE_BLE_ON) {
                     // Show prevState of BLE_ON as OFF to standard users
                     prevState = BluetoothAdapter.STATE_OFF;
+                }
+                else if (prevState == BluetoothAdapter.STATE_BLE_TURNING_OFF) {
+                    // show prevState to TURNING_OFF
+                    prevState = BluetoothAdapter.STATE_TURNING_OFF;
                 }
                 Intent intent = new Intent(BluetoothAdapter.ACTION_STATE_CHANGED);
                 intent.putExtra(BluetoothAdapter.EXTRA_PREVIOUS_STATE, prevState);
