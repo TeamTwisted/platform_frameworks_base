@@ -201,8 +201,12 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         mSettingsButton = (SettingsButton) findViewById(R.id.settings_button);
         mSettingsContainer = findViewById(R.id.settings_button_container);
         mSettingsButton.setOnClickListener(this);
-        mSomcQuickSettings = findViewById(R.id.somc_qs_button);
-        mSomcQuickSettings.setOnClickListener(this);
+        mSettingsButton.setOnLongClickListener(this);
+        if (Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.ENABLE_QS_EDIT_BUTTON, 1) == 1) {
+            mSomcQuickSettings = findViewById(R.id.somc_qs_button);
+            mSomcQuickSettings.setOnClickListener(this);
+        }
         mQsDetailHeader = findViewById(R.id.qs_detail_header);
         mQsDetailHeader.setAlpha(0);
         mQsDetailHeaderTitle = (TextView) mQsDetailHeader.findViewById(android.R.id.title);
@@ -1166,12 +1170,17 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
 
     private void updateSomcQuickSettingsVisibility() {
         boolean isLocked = mKeyguard != null && mKeyguard.isSecure() && mKeyguard.isShowing();
-        if (isLocked) {
-            mSomcQuickSettings.setVisibility(View.GONE);
-        } else if (mExpanded) {
-            mSomcQuickSettings.setVisibility(View.VISIBLE);
+        if (Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.ENABLE_QS_EDIT_BUTTON, 1) == 1) {
+            if (isLocked) {
+                mSomcQuickSettings.setVisibility(View.GONE);
+            } else if (mExpanded) {
+                mSomcQuickSettings.setVisibility(View.VISIBLE);
+            } else {
+                mSomcQuickSettings.setVisibility(View.INVISIBLE);
+            }
         } else {
-            mSomcQuickSettings.setVisibility(View.INVISIBLE);
+            mSomcQuickSettings.setVisibility(View.GONE);
         }
     }
     
