@@ -511,11 +511,11 @@ public class NavigationBarView extends LinearLayout {
         // update back buttons color
         if (shouldColor && mNavBarButtonColorMode != 3) {
             backIcon.mutate();
-            backIcon.setTintMode(PorterDuff.Mode.MULTIPLY);
+            backIcon.setTintMode(PorterDuff.Mode.SRC_IN);
             backIcon.setTint(mNavBarButtonColor);
 
             backIconLand.mutate();
-            backIconLand.setTintMode(PorterDuff.Mode.MULTIPLY);
+            backIconLand.setTintMode(PorterDuff.Mode.SRC_IN);
             backIconLand.setTint(mNavBarButtonColor);
         }
 
@@ -1476,8 +1476,8 @@ public class NavigationBarView extends LinearLayout {
             Drawable iconBack, Drawable iconBackLand, boolean color) {
         iconBack.mutate();
         iconBackLand.mutate();
-        iconBack.setTintMode(PorterDuff.Mode.MULTIPLY);
-        iconBackLand.setTintMode(PorterDuff.Mode.MULTIPLY);
+        iconBack.setTintMode(PorterDuff.Mode.SRC_IN);
+        iconBackLand.setTintMode(PorterDuff.Mode.SRC_IN);
         if (color && mNavBarButtonColorMode != 3) {
             iconBack.setTint(mNavBarButtonColor);
             iconBackLand.setTint(mNavBarButtonColor);
