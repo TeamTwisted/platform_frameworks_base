@@ -258,9 +258,41 @@ public class PermissionMonitor {
             loge("Invalid app in onAppRemoved: " + appUid);
             return;
         }
+        Map<Integer, Boolean> apps = new HashMap<Integer, Boolean>();
+
+        String[] packages = mPackageManager.getPackagesForUid(appUid);
+        if (packages != null && packages.length > 0) {
+            Boolean permission = null;
+            for (String name : packages) {
+                try {
+                    PackageInfo app = mPackageManager.getPackageInfo(name, GET_PERMISSIONS);
+
+                    boolean isNetwork = hasNetworkPermission(app);
+                    boolean isSystem = hasSystemPermission(app);
+
+                    if (isNetwork || isSystem) permission = isSystem;
+
+                    // 1. If there are SYSTEM permissions, then the original is SYSTEM permissions, do not update, return.
+                    if (permission == SYSTEM) return;
+                } catch (NameNotFoundException e) {
+                    loge("NameNotFoundException in onAppAdded: " + e);
+                }
+            }
+
+            if (permission != null) {
+                // 2. If other app of this uid have NETWORK permissions and the original is NETWORK permissions, do not update, return.
+                // 3. If other app of this uid have NETWORK permissions and the original is SYSTEM permissions, update permissions.
+                if (permission != mApps.get(appUid)) {
+                    mApps.put(appUid, permission);
+                    apps.put(appUid, permission);
+                    update(mUsers, apps, true);
+                }
+                return;
+            }
+        }
+        // 4. If all app of this uid do not have any network permission to remove permissions.
         mApps.remove(appUid);
 
-        Map<Integer, Boolean> apps = new HashMap<Integer, Boolean>();
         apps.put(appUid, NETWORK);  // doesn't matter which permission we pick here
         update(mUsers, apps, false);
     }
