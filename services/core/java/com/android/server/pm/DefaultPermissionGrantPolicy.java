@@ -20,7 +20,6 @@ import android.Manifest;
 import android.app.DownloadManager;
 import android.app.admin.DevicePolicyManager;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManagerInternal.PackagesProvider;
@@ -259,7 +258,6 @@ final class DefaultPermissionGrantPolicy {
                     && doesPackageSupportRuntimePermissions(setupPackage)) {
                 grantRuntimePermissionsLPw(setupPackage, PHONE_PERMISSIONS, true, userId);
                 grantRuntimePermissionsLPw(setupPackage, CONTACTS_PERMISSIONS, userId);
-
             }
 
             // Camera
@@ -495,8 +493,6 @@ final class DefaultPermissionGrantPolicy {
             if (browserPackage != null
                     && doesPackageSupportRuntimePermissions(browserPackage)) {
                 grantRuntimePermissionsLPw(browserPackage, LOCATION_PERMISSIONS, userId);
-                grantRuntimePermissionsLPw(browserPackage, CONTACTS_PERMISSIONS, userId);
-                grantRuntimePermissionsLPw(browserPackage, STORAGE_PERMISSIONS, userId);
             }
 
             // IME
@@ -646,22 +642,22 @@ final class DefaultPermissionGrantPolicy {
                     "com.google.android.syncadapters.contacts", userId);
             if (googlecontactssyncPackage != null) {
                 grantRuntimePermissionsLPw(googlecontactssyncPackage, CONTACTS_PERMISSIONS, userId);
-            }			
+            }
 
 			// Google Backup Transport
             PackageParser.Package googlebackuptransportPackage = getDefaultProviderAuthorityPackageLPr(
                     "com.google.android.backuptransport", userId);
             if (googlebackuptransportPackage != null) {
                 grantRuntimePermissionsLPw(googlebackuptransportPackage, CONTACTS_PERMISSIONS, userId);
-            }			
-			
+            }
+
 			// Google Play Framework
             PackageParser.Package gsfcorePackage = getDefaultProviderAuthorityPackageLPr(
                     "com.google.android.gsf", userId);
             if (gsfcorePackage != null) {
                 grantRuntimePermissionsLPw(gsfcorePackage, CONTACTS_PERMISSIONS, userId);
                 grantRuntimePermissionsLPw(gsfcorePackage, PHONE_PERMISSIONS, userId);
-            }		
+            }
 
 			// Google Setup Wizard
             PackageParser.Package setupwizardPackage = getDefaultProviderAuthorityPackageLPr(
@@ -669,7 +665,7 @@ final class DefaultPermissionGrantPolicy {
             if (setupwizardPackage != null) {
                 grantRuntimePermissionsLPw(setupwizardPackage, CONTACTS_PERMISSIONS, userId);
                 grantRuntimePermissionsLPw(setupwizardPackage, PHONE_PERMISSIONS, userId);
-            }	
+            }
 
 			// Google Play Store
             PackageParser.Package vendingPackage = getDefaultProviderAuthorityPackageLPr(
@@ -679,8 +675,8 @@ final class DefaultPermissionGrantPolicy {
                 grantRuntimePermissionsLPw(vendingPackage, PHONE_PERMISSIONS, userId);
                 grantRuntimePermissionsLPw(vendingPackage, LOCATION_PERMISSIONS, userId);
                 grantRuntimePermissionsLPw(vendingPackage, SMS_PERMISSIONS, userId);
-            }	
-				
+            }
+
             mService.mSettings.onDefaultRuntimePermissionsGrantedLPr(userId);
         }
     }
@@ -778,8 +774,6 @@ final class DefaultPermissionGrantPolicy {
         if (browserPackage != null
                 && doesPackageSupportRuntimePermissions(browserPackage)) {
             grantRuntimePermissionsLPw(browserPackage, LOCATION_PERMISSIONS, false, false, userId);
-            grantRuntimePermissionsLPw(browserPackage, CONTACTS_PERMISSIONS, false, false, userId);
-            grantRuntimePermissionsLPw(browserPackage, STORAGE_PERMISSIONS, false, false, userId);
         }
     }
 
@@ -787,12 +781,7 @@ final class DefaultPermissionGrantPolicy {
             Intent intent, int userId) {
         ResolveInfo handler = mService.resolveIntent(intent,
                 intent.resolveType(mService.mContext.getContentResolver()), 0, userId);
-        if (handler == null || handler.activityInfo == null) {
-            return null;
-        }
-        ActivityInfo activityInfo = handler.activityInfo;
-        if (activityInfo.packageName.equals(mService.mResolveActivity.packageName)
-                && activityInfo.name.equals(mService.mResolveActivity.name)) {
+        if (handler == null) {
             return null;
         }
         return getSystemPackageLPr(handler.activityInfo.packageName);
@@ -924,8 +913,8 @@ final class DefaultPermissionGrantPolicy {
 
                     mService.grantRuntimePermission(pkg.packageName, permission, userId);
                     if (DEBUG) {
-                        Log.i(TAG, "Granted " + permission + " to default handler "
-                                + pkg.packageName);
+                        Log.i(TAG, "Granted " + (systemFixed ? "fixed " : "not fixed ")
+                                + permission + " to default handler " + pkg.packageName);
                     }
 
                     int newFlags = PackageManager.FLAG_PERMISSION_GRANTED_BY_DEFAULT;
@@ -935,6 +924,19 @@ final class DefaultPermissionGrantPolicy {
 
                     mService.updatePermissionFlags(permission, pkg.packageName,
                             newFlags, newFlags, userId);
+                }
+
+                // If a component gets a permission for being the default handler A
+                // and also default handler B, we grant the weaker grant form.
+                if ((flags & PackageManager.FLAG_PERMISSION_GRANTED_BY_DEFAULT) != 0
+                        && (flags & PackageManager.FLAG_PERMISSION_SYSTEM_FIXED) != 0
+                        && !systemFixed) {
+                    if (DEBUG) {
+                        Log.i(TAG, "Granted not fixed " + permission + " to default handler "
+                                + pkg.packageName);
+                    }
+                    mService.updatePermissionFlags(permission, pkg.packageName,
+                            PackageManager.FLAG_PERMISSION_SYSTEM_FIXED, 0, userId);
                 }
             }
         }
@@ -963,3 +965,4 @@ final class DefaultPermissionGrantPolicy {
         return pkg.applicationInfo.targetSdkVersion > Build.VERSION_CODES.LOLLIPOP_MR1;
     }
 }
+
