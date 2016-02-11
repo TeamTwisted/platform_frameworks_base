@@ -145,7 +145,8 @@ public class PrintActivity extends Activity implements RemotePrintDocument.Updat
     private static final int MIN_COPIES = 1;
     private static final String MIN_COPIES_STRING = String.valueOf(MIN_COPIES);
 
-    private static final Pattern PATTERN_DIGITS = Pattern.compile("[\\d]+");
+    private static final Pattern PATTERN_DIGITS = Pattern.compile("[\\d]{1,9}");
+    // limit PATTERN_DIGITS range for avoiding Integer Overflow Exception.
 
     private static final Pattern PATTERN_ESCAPE_SPECIAL_CHARS = Pattern.compile(
             "(?=[]\\[+&|!(){}^\"~*?:\\\\])");
