@@ -45,4 +45,7 @@
     <string name="quick_settings_expanded_desktop">Expanded</string>
     <string name="quick_settings_expanded_desktop_off">Normal</string>
 
+    <!-- IME selector Tile -->
+    <string name="quick_settings_ime_label">IME</string>
+
 </resources>
