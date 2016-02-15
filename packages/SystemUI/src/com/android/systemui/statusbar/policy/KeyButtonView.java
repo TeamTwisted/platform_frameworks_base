@@ -29,8 +29,8 @@ import android.graphics.drawable.Drawable;
 import android.hardware.input.InputManager;
 import android.media.AudioManager;
 import android.os.Bundle;
-import android.os.RemoteException;
 import android.os.Handler;
+import android.os.RemoteException;
 import android.os.SystemClock;
 import android.os.UserHandle;
 import android.provider.Settings;
@@ -54,6 +54,7 @@ import com.android.internal.util.slim.Action;
 
 import com.android.systemui.R;
 import com.android.systemui.statusbar.phone.NavigationBarView;
+
 import java.util.ArrayList;
 
 import static android.view.accessibility.AccessibilityNodeInfo.ACTION_CLICK;
@@ -125,7 +126,6 @@ public class KeyButtonView extends ImageView {
         mTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
         mAudioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         setBackground(mRipple = new KeyButtonRipple(context, this));
-        setBackground(new KeyButtonRipple(context, this));
     }
 
     @Override
@@ -261,6 +261,7 @@ public class KeyButtonView extends ImageView {
                 removeCallbacks(mCheckLongPress);
                 break;
         }
+
         mHandler.post(mNavButtonDimActivator);
 
         return true;
@@ -299,7 +300,7 @@ public class KeyButtonView extends ImageView {
     private OnLongClickListener mLongPressListener = new OnLongClickListener() {
         @Override
         public boolean onLongClick(View v) {
-           boolean b = true;
+            boolean b = true;
             if (mCallback != null) {
                 if (!mCallback.onLongClick(v)) {
                     b = false;
@@ -328,6 +329,7 @@ public class KeyButtonView extends ImageView {
         setPressed(false);
         mGestureAborted = true;
     }
+
     public interface LongClickCallback {
         public boolean onLongClick(View v);
     }
