@@ -1268,6 +1268,11 @@ public final class StreamConfigurationMap {
 
     private Size[] getInternalFormatSizes(int format, int dataspace,
             boolean output, boolean highRes) {
+        // All depth formats are non-high-res.
+        if (dataspace == HAL_DATASPACE_DEPTH && highRes) {
+            return new Size[0];
+        }
+
         SparseIntArray formatsMap =
                 !output ? mInputFormats :
                 dataspace == HAL_DATASPACE_DEPTH ? mDepthOutputFormats :
@@ -1305,7 +1310,8 @@ public final class StreamConfigurationMap {
                             break;
                         }
                     }
-                    if (highRes != (duration > DURATION_20FPS_NS)) {
+                    if (dataspace != HAL_DATASPACE_DEPTH &&
+                            highRes != (duration > DURATION_20FPS_NS)) {
                         continue;
                     }
                 }
