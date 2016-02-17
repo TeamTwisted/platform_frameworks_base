@@ -138,27 +138,30 @@ public abstract class CountDownTimer {
         @Override
         public void handleMessage(Message msg) {
             CountDownTimer countDownTimer = countDownTimerWeakReference.get();
-            if(countDownTimer instanceof CountDownTimer) {
-                synchronized (countDownTimer) {
-                    if (countDownTimer.mCancelled) {
-                        return;
-                    }
-                    final long millisLeft = countDownTimer.mStopTimeInFuture - SystemClock.elapsedRealtime();
-                    if (millisLeft <= 0) {
-                        countDownTimer.onFinish();
-                    } else if (millisLeft < countDownTimer.mCountdownInterval) {
-                        // no tick, just delay until done
-                        sendMessageDelayed(obtainMessage(MSG), millisLeft);
-                    } else {
-                        long lastTickStart = SystemClock.elapsedRealtime();
-                        countDownTimer.onTick(millisLeft);
-                        // take into account user's onTick taking time to execute
-                        long delay = lastTickStart + countDownTimer.mCountdownInterval - SystemClock.elapsedRealtime();
-                        // special case: user's onTick took more than interval to
-                        // complete, skip to next interval
-                        while (delay < 0) delay += countDownTimer.mCountdownInterval;
-                        sendMessageDelayed(obtainMessage(MSG), delay);
-                    }
+            if (countDownTimer == null) {
+                return;
+            }
+            synchronized (countDownTimer) {
+                if (countDownTimer.mCancelled) {
+                    return;
+                }
+                final long millisLeft = countDownTimer.mStopTimeInFuture 
+                        - SystemClock.elapsedRealtime();
+                if (millisLeft <= 0) {
+                    countDownTimer.onFinish();
+                } else if (millisLeft < countDownTimer.mCountdownInterval) {
+                    // no tick, just delay until done
+                    sendMessageDelayed(obtainMessage(MSG), millisLeft);
+                } else {
+                    long lastTickStart = SystemClock.elapsedRealtime();
+                    countDownTimer.onTick(millisLeft);
+                    // take into account user's onTick taking time to execute
+                    long delay = lastTickStart + countDownTimer.mCountdownInterval 
+                            - SystemClock.elapsedRealtime();
+                    // special case: user's onTick took more than interval to
+                    // complete, skip to next interval
+                    while (delay < 0) delay += countDownTimer.mCountdownInterval;
+                    sendMessageDelayed(obtainMessage(MSG), delay);
                 }
             }
         }
