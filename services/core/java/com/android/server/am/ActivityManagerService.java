@@ -9793,6 +9793,10 @@ public final class ActivityManagerService extends ActivityManagerNative
                             cpi.applicationInfo.uid, name);
                     return null;
                 }
+                if (!cpr.hasConnectionOrHandle()) {
+                    // All callers are gone.
+                    return null;
+                }
                 try {
                     if (DEBUG_MU) Slog.v(TAG_MU,
                             "Waiting to start provider " + cpr
@@ -15621,9 +15625,14 @@ public final class ActivityManagerService extends ActivityManagerNative
         if (!app.conProviders.isEmpty()) {
             for (int i = app.conProviders.size() - 1; i >= 0; i--) {
                 ContentProviderConnection conn = app.conProviders.get(i);
-                conn.provider.connections.remove(conn);
-                stopAssociationLocked(app.uid, app.processName, conn.provider.uid,
-                        conn.provider.name);
+                ContentProviderRecord cpr = conn.provider;
+                cpr.connections.remove(conn);
+                if (conn.waiting && !cpr.hasConnectionOrHandle()) {
+                    synchronized (cpr) {
+                        cpr.notifyAll();
+                    }
+                }
+                stopAssociationLocked(app.uid, app.processName, cpr.uid, cpr.name);
             }
             app.conProviders.clear();
         }
