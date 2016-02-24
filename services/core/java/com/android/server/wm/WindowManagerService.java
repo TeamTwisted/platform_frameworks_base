@@ -3238,6 +3238,10 @@ public class WindowManagerService extends IWindowManager.Stub
                         if (DEBUG_CONFIGURATION) Slog.i(TAG, "Window " + win
                                 + " visible with new config: " + mCurConfiguration);
                         outConfig.setTo(mCurConfiguration);
+                        final TaskStack stack = win.getStack();
+                        final Configuration overrideConfig =
+                                (stack != null) ? stack.mOverrideConfig : Configuration.EMPTY;
+                        win.setConfiguration(mCurConfiguration, overrideConfig);
                     }
                 }
                 if ((attrChanges&WindowManager.LayoutParams.FORMAT_CHANGED) != 0) {
