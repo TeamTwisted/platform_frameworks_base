@@ -49,7 +49,7 @@ import com.android.systemui.statusbar.phone.StatusBarKeyguardViewManager;
 public class KeyguardIndicationController {
 
     private static final String TAG = "KeyguardIndicationController";
-    private static final boolean DEBUG_CHARGING_CURRENT = false;
+    private static final boolean DEBUG_CHARGING_CURRENT = true;
 
     private static final int MSG_HIDE_TRANSIENT = 1;
     private static final int MSG_CLEAR_FP_MSG = 2;
