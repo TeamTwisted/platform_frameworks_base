@@ -19,6 +19,7 @@
     <!-- SystemUI Tuner Parts -->
     <string name="systemui_tuner_statusbar_title">Statusbar Items</string>
     <string name="systemui_tuner_qs_title">Quick Settings</string>
+    <string name="status_bar_silent">Silent mode</string>
     
     <!-- Sound QS Tile -->
     <string name="quick_settings_sound_label">Sound</string>
