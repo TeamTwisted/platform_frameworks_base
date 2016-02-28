@@ -26,12 +26,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.UserInfo;
+import android.database.ContentObserver;
 import android.media.AudioManager;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.IRemoteCallback;
 import android.os.RemoteException;
 import android.os.UserHandle;
 import android.os.UserManager;
+import android.provider.Settings;
 import android.provider.Settings.Global;
 import android.telecom.TelecomManager;
 import android.util.Log;
@@ -79,6 +82,7 @@ public class PhoneStatusBarPolicy implements Callback {
 
     private boolean mZenVisible;
     private boolean mVolumeVisible;
+    private boolean mVibSilentIconVisible;
     private boolean mCurrentUserSetup;
 
     private int mZen;
@@ -179,7 +183,26 @@ public class PhoneStatusBarPolicy implements Callback {
         mService.setIcon(SLOT_MANAGED_PROFILE, R.drawable.stat_sys_managed_profile_status, 0,
                 mContext.getString(R.string.accessibility_managed_profile));
         mService.setIconVisibility(SLOT_MANAGED_PROFILE, false);
+
+        mIconObserver.onChange(true);
+        mContext.getContentResolver().registerContentObserver(
+                Settings.System.getUriFor(Settings.System.SHOW_VIBSILENT_ICON),
+                false, mIconObserver);
     }
+
+    private final ContentObserver mIconObserver = new ContentObserver(null) {
+        @Override
+        public void onChange(boolean selfChange, Uri uri) {
+            mVibSilentIconVisible = Settings.System.getIntForUser(mContext.getContentResolver(),
+                    Settings.System.SHOW_VIBSILENT_ICON, 1, UserHandle.USER_CURRENT) == 1;
+            updateVolumeZen();
+        }
+
+        @Override
+        public void onChange(boolean selfChange) {
+            onChange(selfChange, null);
+        }
+    };
 
     public void setZenMode(int zen) {
         mZen = zen;
@@ -276,7 +299,7 @@ public class PhoneStatusBarPolicy implements Callback {
             mZenVisible = zenVisible;
         }
         // overrules volume icon
-        if (zenModeNoInterruptions) {
+        if (zenModeNoInterruptions || !mVibSilentIconVisible) {
             volumeVisible = false;
         }
 

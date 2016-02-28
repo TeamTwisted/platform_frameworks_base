@@ -17,6 +17,7 @@ package com.android.systemui.tuner;
 
 import android.app.AlertDialog;
 import android.app.FragmentTransaction;
+import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.database.ContentObserver;
@@ -28,6 +29,7 @@ import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceGroup;
+import android.preference.PreferenceScreen;
 import android.preference.SwitchPreference;
 import android.provider.Settings;
 import android.view.Menu;
@@ -43,6 +45,10 @@ public class TunerFragment extends PreferenceFragment {
 
     public static final String TAG = "TunerFragment";
 
+    private static final String SHOW_VIBSILENT_ICON = "show_vibsilent_icon";
+
+    private SwitchPreference mShowVibSilentIcon;
+
     private final SettingObserver mSettingObserver = new SettingObserver();
 
     private static final int MENU_REMOVE = Menu.FIRST + 1;
@@ -51,8 +57,15 @@ public class TunerFragment extends PreferenceFragment {
         super.onCreate(savedInstanceState);
 
         addPreferencesFromResource(R.xml.tuner_prefs);
+        final ContentResolver resolver = getActivity().getContentResolver();
+
         getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
         setHasOptionsMenu(true);
+
+        mShowVibSilentIcon = (SwitchPreference) findPreference(SHOW_VIBSILENT_ICON);
+        mShowVibSilentIcon.setChecked((Settings.System.getInt(resolver,
+                Settings.System.SHOW_VIBSILENT_ICON, 1) == 1));
+
     }
 
     @Override
@@ -130,5 +143,16 @@ public class TunerFragment extends PreferenceFragment {
         public void onChange(boolean selfChange, Uri uri, int userId) {
             super.onChange(selfChange, uri, userId);
         }
+    }
+
+    @Override
+    public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
+        if  (preference == mShowVibSilentIcon) {
+            boolean checked = ((SwitchPreference)preference).isChecked();
+            Settings.System.putInt(getActivity().getContentResolver(),
+                    Settings.System.SHOW_VIBSILENT_ICON, checked ? 1:0);
+            return true;
+        }
+        return super.onPreferenceTreeClick(preferenceScreen, preference);
     }
 }

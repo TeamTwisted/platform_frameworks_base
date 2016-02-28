@@ -33,6 +33,10 @@
             android:key="zen"
             android:title="@string/quick_settings_dnd_label" />
 
+        <SwitchPreference
+            android:key="show_vibsilent_icon"
+            android:title="@string/status_bar_vibsil" />
+
         <com.android.systemui.tuner.StatusBarSwitch
             android:key="alarm_clock"
             android:title="@string/status_bar_alarm" />
