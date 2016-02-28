@@ -4446,6 +4446,12 @@ public final class Settings {
         public static final String SHOW_VIBSILENT_ICON = "show_vibsilent_icon";
 
         /**
+         * show headset icon in statusbar
+         * @hide
+         */
+        public static final String SHOW_HEADSET_ICON = "show_headset_icon";
+
+        /**
          * Settings to backup. This is here so that it's in the same place as the settings
          * keys and easy to update.
          *

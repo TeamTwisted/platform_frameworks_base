@@ -30,4 +30,7 @@
     <!-- Statusbar Vibrate silent switch -->
     <string name="status_bar_vibsil">Vibrate &amp; silent</string>
 
+    <!-- headset icon switch -->
+    <string name="status_bar_headset">Headphones</string>
+
 </resources>

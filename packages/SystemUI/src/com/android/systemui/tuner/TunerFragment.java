@@ -46,8 +46,10 @@ public class TunerFragment extends PreferenceFragment {
     public static final String TAG = "TunerFragment";
 
     private static final String SHOW_VIBSILENT_ICON = "show_vibsilent_icon";
+    private static final String SHOW_HEADSET_ICON = "show_headset_icon";
 
     private SwitchPreference mShowVibSilentIcon;
+    private SwitchPreference mShowHeadsetIcon;
 
     private final SettingObserver mSettingObserver = new SettingObserver();
 
@@ -65,6 +67,10 @@ public class TunerFragment extends PreferenceFragment {
         mShowVibSilentIcon = (SwitchPreference) findPreference(SHOW_VIBSILENT_ICON);
         mShowVibSilentIcon.setChecked((Settings.System.getInt(resolver,
                 Settings.System.SHOW_VIBSILENT_ICON, 1) == 1));
+
+        mShowHeadsetIcon = (SwitchPreference) findPreference(SHOW_HEADSET_ICON);
+        mShowHeadsetIcon.setChecked((Settings.System.getInt(resolver,
+                Settings.System.SHOW_HEADSET_ICON, 0) == 1));
 
     }
 
@@ -151,6 +157,12 @@ public class TunerFragment extends PreferenceFragment {
             boolean checked = ((SwitchPreference)preference).isChecked();
             Settings.System.putInt(getActivity().getContentResolver(),
                     Settings.System.SHOW_VIBSILENT_ICON, checked ? 1:0);
+            return true;
+        }
+        if  (preference == mShowHeadsetIcon) {
+            boolean checked = ((SwitchPreference)preference).isChecked();
+            Settings.System.putInt(getActivity().getContentResolver(),
+                    Settings.System.SHOW_HEADSET_ICON, checked ? 1:0);
             return true;
         }
         return super.onPreferenceTreeClick(preferenceScreen, preference);

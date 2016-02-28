@@ -84,6 +84,7 @@ public class PhoneStatusBarPolicy implements Callback {
     private boolean mZenVisible;
     private boolean mVolumeVisible;
     private boolean mVibSilentIconVisible;
+    private boolean mHeadsetIcon;
     private boolean mCurrentUserSetup;
 
     private int mZen;
@@ -197,6 +198,9 @@ public class PhoneStatusBarPolicy implements Callback {
         mContext.getContentResolver().registerContentObserver(
                 Settings.System.getUriFor(Settings.System.SHOW_VIBSILENT_ICON),
                 false, mIconObserver);
+        mContext.getContentResolver().registerContentObserver(
+                Settings.System.getUriFor(Settings.System.SHOW_HEADSET_ICON),
+                false, mIconObserver);
     }
 
     private final ContentObserver mIconObserver = new ContentObserver(null) {
@@ -204,6 +208,8 @@ public class PhoneStatusBarPolicy implements Callback {
         public void onChange(boolean selfChange, Uri uri) {
             mVibSilentIconVisible = Settings.System.getIntForUser(mContext.getContentResolver(),
                     Settings.System.SHOW_VIBSILENT_ICON, 1, UserHandle.USER_CURRENT) == 1;
+            mHeadsetIcon = Settings.System.getIntForUser(mContext.getContentResolver(),
+                    Settings.System.SHOW_HEADSET_ICON, 0, UserHandle.USER_CURRENT) == 1;
             updateVolumeZen();
         }
 
@@ -215,7 +221,7 @@ public class PhoneStatusBarPolicy implements Callback {
 
     private final void updateHeadset(Intent intent) {
         int state = intent.getIntExtra("state", 0);
-        mService.setIconVisibility(SLOT_HEADSET, state == 1 ? true : false);
+        mService.setIconVisibility(SLOT_HEADSET, (state == 1 && mHeadsetIcon) ? true : false);
     }
 
     public void setZenMode(int zen) {
