@@ -682,6 +682,8 @@ class AlarmManagerService extends SystemService {
     void reAddAlarmLocked(Alarm a, long nowElapsed, boolean doValidate) {
         a.when = a.origWhen;
         long whenElapsed = convertToElapsed(a.when, a.type);
+        long minTrigger = nowElapsed + mConstants.MIN_FUTURITY;
+        whenElapsed = (whenElapsed > minTrigger) ? whenElapsed : a.whenElapsed;
         final long maxElapsed;
         if (a.windowLength == AlarmManager.WINDOW_EXACT) {
             // Exact
