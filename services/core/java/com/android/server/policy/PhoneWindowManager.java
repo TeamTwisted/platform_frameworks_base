@@ -43,6 +43,8 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.database.ContentObserver;
+import android.graphics.drawable.AnimatedRotateDrawable;
+import android.graphics.drawable.Drawable;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.hardware.camera2.CameraAccessException;
@@ -121,6 +123,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.view.animation.AnimationUtils;
 import android.view.WindowManagerPolicyControl;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.android.internal.R;
@@ -7236,6 +7239,16 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     mBootMsgDialog.getWindow().setAttributes(lp);
                     mBootMsgDialog.setCancelable(false);
                     mBootMsgDialog.show();
+
+                    // Reduce animation to 15 FPS to improve boot time
+                    ProgressBar spinner = (ProgressBar) mBootMsgDialog.findViewById(R.id.progress);
+                    if (spinner != null) {
+                        Drawable d = spinner.getIndeterminateDrawable();
+                        if (d != null && d instanceof AnimatedRotateDrawable) {
+                            AnimatedRotateDrawable ard = (AnimatedRotateDrawable) d;
+                            ard.setFramesDuration(66);
+                        }
+                    }
                 }
 
                 // Only display the current package name if the main message says "Optimizing app N of M".
