@@ -85,6 +85,8 @@ class DelegateMethodAdapter extends MethodVisitor {
     private String mDesc;
     /** True if the original method is static. */
     private final boolean mIsStatic;
+    /** True if the method is contained in a static inner class */
+    private final boolean mIsStaticInnerClass;
     /** The internal class name (e.g. <code>com/android/SomeClass$InnerClass</code>.) */
     private final String mClassName;
     /** The method name. */
@@ -120,8 +122,9 @@ class DelegateMethodAdapter extends MethodVisitor {
             String className,
             String methodName,
             String desc,
-            boolean isStatic) {
-        super(Main.ASM_VERSION);
+            boolean isStatic,
+            boolean isStaticClass) {
+        super(Opcodes.ASM4);
         mLog = log;
         mOrgWriter = mvOriginal;
         mDelWriter = mvDelegate;
@@ -129,6 +132,7 @@ class DelegateMethodAdapter extends MethodVisitor {
         mMethodName = methodName;
         mDesc = desc;
         mIsStatic = isStatic;
+        mIsStaticInnerClass = isStaticClass;
     }
 
     /**
@@ -184,7 +188,7 @@ class DelegateMethodAdapter extends MethodVisitor {
             mDelWriter.visitLineNumber((Integer) p[0], (Label) p[1]);
         }
 
-        ArrayList<Type> paramTypes = new ArrayList<>();
+        ArrayList<Type> paramTypes = new ArrayList<Type>();
         String delegateClassName = mClassName + DELEGATE_SUFFIX;
         boolean pushedArg0 = false;
         int maxStack = 0;
@@ -206,7 +210,7 @@ class DelegateMethodAdapter extends MethodVisitor {
         // by the 'this' of any outer class, if any.
         if (!mIsStatic) {
 
-            if (outerType != null) {
+            if (outerType != null && !mIsStaticInnerClass) {
                 // The first-level inner class has a package-protected member called 'this$0'
                 // that points to the outer class.
 
@@ -249,8 +253,7 @@ class DelegateMethodAdapter extends MethodVisitor {
         mDelWriter.visitMethodInsn(Opcodes.INVOKESTATIC,
                 delegateClassName,
                 mMethodName,
-                desc,
-                false);
+                desc);
 
         Type returnType = Type.getReturnType(mDesc);
         mDelWriter.visitInsn(returnType.getOpcode(Opcodes.IRETURN));
@@ -368,9 +371,9 @@ class DelegateMethodAdapter extends MethodVisitor {
     }
 
     @Override
-    public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
+    public void visitMethodInsn(int opcode, String owner, String name, String desc) {
         if (mOrgWriter != null) {
-            mOrgWriter.visitMethodInsn(opcode, owner, name, desc, itf);
+            mOrgWriter.visitMethodInsn(opcode, owner, name, desc);
         }
     }
 
