@@ -3235,22 +3235,16 @@ public final class Settings {
         public static final String BATTERY_LIGHT_PULSE = "battery_light_pulse";
 
         /**
-         * What color to use for the battery LED while low
+         * What color to use for the battery LED while charging - low
          * @hide
          */
         public static final String BATTERY_LIGHT_LOW_COLOR = "battery_light_low_color";
 
         /**
-         * What color to use for the battery LED while charging - slow or normal
+         * What color to use for the battery LED while charging - medium
          * @hide
          */
         public static final String BATTERY_LIGHT_MEDIUM_COLOR = "battery_light_medium_color";
-
-        /**
-         * What color to use for the battery LED while charging - fast
-         * @hide
-         */
-        public static final String BATTERY_LIGHT_MEDIUM_FAST_COLOR = "battery_light_medium_fast_color";
 
         /**
          * Give SMS notifications a breathing effect
