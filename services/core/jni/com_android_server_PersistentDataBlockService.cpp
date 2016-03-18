@@ -82,8 +82,9 @@ namespace android {
 
     static jlong com_android_server_PersistentDataBlockService_getBlockDeviceSize(JNIEnv *env, jclass, jstring jpath)
     {
-        ScopedUtfChars path(env, jpath);
-        int fd = open(path.c_str(), O_RDONLY);
+        const char *path = env->GetStringUTFChars(jpath, 0);
+        int fd = open(path, O_RDONLY);
+        env->ReleaseStringUTFChars(jpath, path);
 
         if (fd < 0)
             return 0;
@@ -96,8 +97,9 @@ namespace android {
     }
 
     static int com_android_server_PersistentDataBlockService_wipe(JNIEnv *env, jclass, jstring jpath) {
-        ScopedUtfChars path(env, jpath);
-        int fd = open(path.c_str(), O_WRONLY);
+        const char *path = env->GetStringUTFChars(jpath, 0);
+        int fd = open(path, O_WRONLY);
+        env->ReleaseStringUTFChars(jpath, path);
 
         if (fd < 0)
             return 0;
