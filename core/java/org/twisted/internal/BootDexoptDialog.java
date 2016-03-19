@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2015 The NamelessRom Project
+ * Copyright (C) 2016 TeamTwisted Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.namelessrom.internal;
+package org.twisted.internal;
 
 import android.app.ActivityManager;
 import android.app.Dialog;
