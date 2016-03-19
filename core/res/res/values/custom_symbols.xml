@@ -127,8 +127,8 @@
          SDK.  Instead, put them here. -->
     <private-symbols package="com.android.internal" />
 
-    <!-- Nameless -->
-    <java-symbol type="drawable" name="logo_nameless" />
+    <!-- Twisted -->
+    <java-symbol type="drawable" name="logo_twisted" />
 
     <!-- Boot dexopt layout -->
     <java-symbol type="drawable" name="dexopt_brand_logo" />
@@ -137,15 +137,5 @@
     <java-symbol type="id" name="dexopt_message" />
     <java-symbol type="id" name="dexopt_message_detail" />
     <java-symbol type="id" name="dexopt_progress" />
-
-    <!-- Use alternative way to blur lockscreen -->
-    <java-symbol type="bool" name="config_use_stackblur" />
-
-    <!-- Network traffic indicator -->
-    <java-symbol type="dimen" name="net_traffic_single_text_size" />
-    <java-symbol type="dimen" name="net_traffic_multi_text_size" />
-    <java-symbol type="drawable" name="stat_sys_network_traffic_down" />
-    <java-symbol type="drawable" name="stat_sys_network_traffic_up" />
-    <java-symbol type="drawable" name="stat_sys_network_traffic_updown" />
 
 </resources>
