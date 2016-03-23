@@ -4954,8 +4954,8 @@ public final class ActivityManagerService extends ActivityManagerNative
             } else if (app.crashing) {
                 Slog.i(TAG, "Crashing app skipping ANR: " + app + " " + annotation);
                 return;
-            } else if (app.killedByAm) {
-                Slog.i(TAG, "App already killed by AM skipping ANR: " + app + " " + annotation);
+            } else if (app.pid == 0) {
+                Slog.i(TAG, "Skipping died app ANR: " + app + " " + annotation);
                 return;
             }
 
