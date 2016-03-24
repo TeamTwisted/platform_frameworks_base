@@ -23,6 +23,7 @@ package android.renderscript;
 public class ScriptIntrinsicBlend extends ScriptIntrinsic {
     ScriptIntrinsicBlend(long id, RenderScript rs) {
         super(id, rs);
+        guard.open("destroy");
     }
 
     /**

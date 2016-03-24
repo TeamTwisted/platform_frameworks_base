@@ -35,6 +35,7 @@ public final class ScriptIntrinsicBLAS extends ScriptIntrinsic {
 
     private ScriptIntrinsicBLAS(long id, RenderScript rs) {
         super(id, rs);
+        guard.open("destroy");
     }
 
     private static final int RsBlas_sdsdot = 1;

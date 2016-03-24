@@ -38,6 +38,7 @@ public final class ScriptIntrinsicLUT extends ScriptIntrinsic {
             mCache[ct + 768] = (byte)ct;
         }
         setVar(0, mTables);
+        guard.open("destroy");
     }
 
     /**

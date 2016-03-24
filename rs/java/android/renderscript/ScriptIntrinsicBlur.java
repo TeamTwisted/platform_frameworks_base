@@ -28,6 +28,7 @@ public final class ScriptIntrinsicBlur extends ScriptIntrinsic {
 
     private ScriptIntrinsicBlur(long id, RenderScript rs) {
         super(id, rs);
+        guard.open("destroy");
     }
 
     /**

@@ -43,6 +43,7 @@ public final class ScriptIntrinsicColorMatrix extends ScriptIntrinsic {
 
     private ScriptIntrinsicColorMatrix(long id, RenderScript rs) {
         super(id, rs);
+        guard.open("destroy");
     }
 
     /**

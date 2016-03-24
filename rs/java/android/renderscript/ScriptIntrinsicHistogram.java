@@ -26,6 +26,7 @@ public final class ScriptIntrinsicHistogram extends ScriptIntrinsic {
 
     private ScriptIntrinsicHistogram(long id, RenderScript rs) {
         super(id, rs);
+        guard.open("destroy");
     }
 
     /**

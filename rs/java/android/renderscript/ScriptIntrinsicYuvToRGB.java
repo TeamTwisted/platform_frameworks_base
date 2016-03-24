@@ -29,6 +29,7 @@ public final class ScriptIntrinsicYuvToRGB extends ScriptIntrinsic {
 
     ScriptIntrinsicYuvToRGB(long id, RenderScript rs) {
         super(id, rs);
+        guard.open("destroy");
     }
 
     /**

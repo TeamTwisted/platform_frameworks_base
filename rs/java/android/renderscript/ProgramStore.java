@@ -145,6 +145,7 @@ public class ProgramStore extends BaseObj {
 
     ProgramStore(long id, RenderScript rs) {
         super(id, rs);
+        guard.open("destroy");
     }
 
     /**

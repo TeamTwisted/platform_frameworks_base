@@ -24,6 +24,7 @@ public final class ScriptIntrinsicResize extends ScriptIntrinsic {
 
     private ScriptIntrinsicResize(long id, RenderScript rs) {
         super(id, rs);
+        guard.open("destroy");
     }
 
     /**

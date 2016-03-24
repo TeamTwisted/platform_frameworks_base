@@ -26,6 +26,7 @@ public final class ScriptIntrinsicConvolve3x3 extends ScriptIntrinsic {
 
     private ScriptIntrinsicConvolve3x3(long id, RenderScript rs) {
         super(id, rs);
+        guard.open("destroy");
     }
 
     /**

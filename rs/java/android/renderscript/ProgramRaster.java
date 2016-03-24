@@ -56,6 +56,8 @@ public class ProgramRaster extends BaseObj {
 
         mPointSprite = false;
         mCullMode = CullMode.BACK;
+
+        guard.open("destroy");
     }
 
     /**

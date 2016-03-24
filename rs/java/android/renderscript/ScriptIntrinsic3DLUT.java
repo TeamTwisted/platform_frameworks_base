@@ -31,6 +31,7 @@ public final class ScriptIntrinsic3DLUT extends ScriptIntrinsic {
     private ScriptIntrinsic3DLUT(long id, RenderScript rs, Element e) {
         super(id, rs);
         mElement = e;
+        guard.open("destroy");
     }
 
     /**
