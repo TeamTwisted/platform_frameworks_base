@@ -71,6 +71,7 @@ public class URLSpan extends ClickableSpan implements ParcelableSpan {
         Context context = widget.getContext();
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         intent.putExtra(Browser.EXTRA_APPLICATION_ID, context.getPackageName());
+        intent.putExtra(Browser.EXTRA_CREATE_NEW_TAB, true);
         try {
             context.startActivity(intent);
         } catch (ActivityNotFoundException e) {
