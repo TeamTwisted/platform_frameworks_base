@@ -70,6 +70,8 @@ public class StatusBarWindowView extends FrameLayout {
 
     private int mStatusBarHeaderHeight;
 
+    private boolean mDozeWakeupDoubleTap;
+    private GestureDetector mDozeWakeupDoubleTapGesture;
     private boolean mDoubleTapToSleepEnabled;
     private boolean mDoubleTapToSleepLockScreen;
     private GestureDetector mDoubleTapGesture;
@@ -179,6 +181,15 @@ public class StatusBarWindowView extends FrameLayout {
             }
         });
 
+        mDozeWakeupDoubleTapGesture = new GestureDetector(mContext,
+                new GestureDetector.SimpleOnGestureListener() {
+            @Override
+            public boolean onDoubleTap(MotionEvent e) {
+                mService.wakeUpIfDozing(e.getEventTime(), e);
+                return true;
+            }
+        });
+
         // We really need to be able to animate while window animations are going on
         // so that activities may be started asynchronously from panel animations
         final ViewRootImpl root = getViewRootImpl();
@@ -272,10 +283,16 @@ public class StatusBarWindowView extends FrameLayout {
                 && mStackScrollLayout.getVisibility() == View.VISIBLE
                 && mService.getBarState() == StatusBarState.KEYGUARD
                 && !mService.isBouncerShowing()) {
-            intercept = mDragDownHelper.onInterceptTouchEvent(ev);
+            if (!mDozeWakeupDoubleTap || (mDozeWakeupDoubleTap && !mService.isDozing())) {
+                intercept = mDragDownHelper.onInterceptTouchEvent(ev);
+            }
             // wake up on a touch down event, if dozing
-            if (ev.getActionMasked() == MotionEvent.ACTION_DOWN) {
-                mService.wakeUpIfDozing(ev.getEventTime(), ev);
+            if (mDozeWakeupDoubleTap) {
+                mDozeWakeupDoubleTapGesture.onTouchEvent(ev);
+            } else {
+                if (ev.getActionMasked() == MotionEvent.ACTION_DOWN) {
+                    mService.wakeUpIfDozing(ev.getEventTime(), ev);
+                }
             }
         }
         if (!intercept) {
@@ -374,6 +391,8 @@ public class StatusBarWindowView extends FrameLayout {
                     Settings.System.DOUBLE_TAP_SLEEP_GESTURE), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.DOUBLE_TAP_SLEEP_LOCK_SCREEN), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.DOZE_WAKEUP_DOUBLETAP), false, this);
             update();
         }
 
@@ -398,6 +417,8 @@ public class StatusBarWindowView extends FrameLayout {
                     resolver, Settings.System.DOUBLE_TAP_SLEEP_GESTURE, 1) == 1;
             mDoubleTapToSleepLockScreen = Settings.System.getInt(
                     resolver, Settings.System.DOUBLE_TAP_SLEEP_LOCK_SCREEN, 0) == 1;
+            mDozeWakeupDoubleTap = Settings.System.getInt(
+                    resolver, Settings.System.DOZE_WAKEUP_DOUBLETAP, 0) == 1;
         }
     }
 }

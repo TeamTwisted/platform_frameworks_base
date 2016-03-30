@@ -2473,6 +2473,12 @@ public final class Settings {
         public static final int SCREEN_BRIGHTNESS_MODE_AUTOMATIC = 1;
 
         /**
+         * Require double tap instead of simple tap to wake from Doze pulse screen
+         * @hide
+         */
+        public static final String DOZE_WAKEUP_DOUBLETAP = "doze_wakeup_doubletap";
+
+        /**
          * Whether to control brightness from status bar
          *
          * @hide
